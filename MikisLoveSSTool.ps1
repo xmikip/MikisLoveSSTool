@@ -1567,27 +1567,25 @@ function Render-Cards {
             default  { "Open" }
 
         }
+$SafeTitle = $Tool.Name `
+    -replace '&', '&amp;' `
+    -replace '<', '&lt;' `
+    -replace '>', '&gt;'
 
-        $SafeTitle = $Tool.Name `
-            -replace '&', '&amp;' `
-            -replace '<', '&lt;' `
-            -replace '>', '&gt;'
+$SafeDesc = $Tool.Desc `
+    -replace '&', '&amp;' `
+    -replace '<', '&lt;' `
+    -replace '>', '&gt;'
 
-        $SafeDesc = $Tool.Desc `
-            -replace '&', '&amp;' `
-            -replace '<', '&lt;' `
-            -replace '>', '&gt;'
+$CardString = $CardTemplate.Replace("{TITLE}", $SafeTitle)
+$CardString = $CardString.Replace("{DESC}", $SafeDesc)
+$CardString = $CardString.Replace("{ACTION}", $ActionLabel)
 
-        $CardString = $CardTemplate `
-            .Replace("{TITLE}", $SafeTitle) `
-            .Replace("{DESC}", $SafeDesc) `
-            .Replace("{ACTION}", $ActionLabel)
+$CardUI = [Windows.Markup.XamlReader]::Parse($CardString)
 
-        $CardUI = [Windows.Markup.XamlReader]::Parse($CardString)
+$ActionBtn = $CardUI.FindName("ActionBtn")
 
-        $ActionBtn = $CardUI.FindName("ActionBtn")
-
-        $ClosureTool = $Tool
+$ClosureTool = $Tool
 
         $ActionBtn.add_Click({
             Run-Tool -Tool $ClosureTool
