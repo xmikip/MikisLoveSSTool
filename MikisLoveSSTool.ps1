@@ -531,8 +531,6 @@ $Tools = @(
         <SolidColorBrush x:Key="TextMuted" Color="#B58AA0"/>
         <SolidColorBrush x:Key="Line" Color="#5C2B47"/>
 
-        <!-- Scrollbar -->
-
         <Style TargetType="ScrollBar">
 
             <Setter Property="Width" Value="8"/>
@@ -582,8 +580,6 @@ $Tools = @(
             </Setter>
 
         </Style>
-
-        <!-- Sidebar buttons -->
 
         <Style x:Key="ActionBtn" TargetType="Button">
 
@@ -656,8 +652,6 @@ $Tools = @(
 
         </Style>
 
-        <!-- Title buttons -->
-
         <Style x:Key="TitleBtn" TargetType="Button">
 
             <Setter Property="Width" Value="34"/>
@@ -713,8 +707,6 @@ $Tools = @(
 
     </Window.Resources>
 
-    <!-- Animations -->
-
     <Window.Triggers>
 
         <EventTrigger RoutedEvent="Window.Loaded">
@@ -728,8 +720,6 @@ $Tools = @(
                         From="0"
                         To="1"
                         Duration="0:0:0.55"/>
-
-                    <!-- Heart pulse -->
 
                     <DoubleAnimation
                         Storyboard.TargetName="HeartScale"
@@ -749,8 +739,6 @@ $Tools = @(
                         AutoReverse="True"
                         RepeatBehavior="Forever"/>
 
-                    <!-- Glow pulse -->
-
                     <DoubleAnimation
                         Storyboard.TargetName="HeartGlow"
                         Storyboard.TargetProperty="Opacity"
@@ -759,8 +747,6 @@ $Tools = @(
                         Duration="0:0:0.8"
                         AutoReverse="True"
                         RepeatBehavior="Forever"/>
-
-                    <!-- Ring pulse -->
 
                     <DoubleAnimation
                         Storyboard.TargetName="PulseRingScale"
@@ -823,8 +809,6 @@ $Tools = @(
                     <RowDefinition Height="*"/>
 
                 </Grid.RowDefinitions>
-
-                <!-- TITLE BAR -->
 
                 <Grid
                     Grid.Row="0"
@@ -894,8 +878,6 @@ $Tools = @(
 
                 </Grid>
 
-                <!-- BODY -->
-
                 <Grid Grid.Row="1">
 
                     <Grid.ColumnDefinitions>
@@ -904,8 +886,6 @@ $Tools = @(
                         <ColumnDefinition Width="*"/>
 
                     </Grid.ColumnDefinitions>
-
-                    <!-- SIDEBAR -->
 
                     <Border
                         Grid.Column="0"
@@ -923,8 +903,6 @@ $Tools = @(
                                 <RowDefinition Height="Auto"/>
 
                             </Grid.RowDefinitions>
-
-                            <!-- HEART -->
 
                             <Grid
                                 Grid.Row="0"
@@ -970,8 +948,6 @@ $Tools = @(
 
                                 </Ellipse>
 
-                                <!-- Heart glow -->
-
                                 <Path
                                     x:Name="HeartGlow"
                                     Width="72"
@@ -990,8 +966,6 @@ $Tools = @(
                                     </Path.Effect>
 
                                 </Path>
-
-                                <!-- Main heart -->
 
                                 <Path
                                     Width="68"
@@ -1033,8 +1007,6 @@ $Tools = @(
 
                             </Grid>
 
-                            <!-- CATEGORIES -->
-
                             <StackPanel
                                 Grid.Row="1"
                                 Margin="0,8,0,0">
@@ -1070,8 +1042,6 @@ $Tools = @(
 
                             <Border Grid.Row="2"/>
 
-                            <!-- FOOTER -->
-
                             <StackPanel Grid.Row="3">
 
                                 <Button
@@ -1091,8 +1061,6 @@ $Tools = @(
                         </Grid>
 
                     </Border>
-
-                    <!-- MAIN -->
 
                     <Grid
                         Grid.Column="1"
@@ -1311,9 +1279,6 @@ function Run-Tool {
             }
 
             "Web" {
-
-                # Direct web pages are opened rather than pretending they are
-                # downloadable files.
 
                 if ($Tool.URL -match '/releases/?$' -or
                     $Tool.URL -match '/downloads/?$' -or
@@ -1567,28 +1532,31 @@ function Render-Cards {
             default  { "Open" }
 
         }
-$SafeTitle = $Tool.Name `
-    -replace '&', '&amp;' `
-    -replace '<', '&lt;' `
-    -replace '>', '&gt;'
 
-$SafeDesc = $Tool.Desc `
-    -replace '&', '&amp;' `
-    -replace '<', '&lt;' `
-    -replace '>', '&gt;'
+        $SafeTitle = $Tool.Name `
+            -replace '&', '&amp;' `
+            -replace '<', '&lt;' `
+            -replace '>', '&gt;'
 
-$CardString = $CardTemplate.Replace("{TITLE}", $SafeTitle)
-$CardString = $CardString.Replace("{DESC}", $SafeDesc)
-$CardString = $CardString.Replace("{ACTION}", $ActionLabel)
+        $SafeDesc = $Tool.Desc `
+            -replace '&', '&amp;' `
+            -replace '<', '&lt;' `
+            -replace '>', '&gt;'
 
-$CardUI = [Windows.Markup.XamlReader]::Parse($CardString)
+        $CardString = $CardTemplate.Replace("{TITLE}", $SafeTitle)
+        $CardString = $CardString.Replace("{DESC}", $SafeDesc)
+        $CardString = $CardString.Replace("{ACTION}", $ActionLabel)
 
-$ActionBtn = $CardUI.FindName("ActionBtn")
+        $CardUI = [Windows.Markup.XamlReader]::Parse($CardString)
 
-$ClosureTool = $Tool
+        $ActionBtn = $CardUI.FindName("ActionBtn")
+
+        $ToolForButton = $Tool
 
         $ActionBtn.add_Click({
-            Run-Tool -Tool $ClosureTool
+            param($Sender, $EventArgs)
+
+            Run-Tool -Tool $ToolForButton
         })
 
         $ToolContainer.Children.Add($CardUI) | Out-Null
